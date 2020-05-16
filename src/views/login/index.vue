@@ -1,84 +1,62 @@
 <template>
-  <div>
-    login
+  <div id="login-wrap">
+    <el-form class="login-form" label-position="top" label-width="80px" :model="fromData">
+      <h2>登录</h2>
+      <el-form-item label="用户名">
+        <el-input v-model="fromData.username"></el-input>
+      </el-form-item>
+      <el-form-item label="用户密码">
+        <el-input v-model="fromData.password"></el-input>
+      </el-form-item>
+      <el-button type="primary" @click.prevent="handleLogin">登录</el-button>
+    </el-form>
   </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
-        }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
-      };
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
-      return {
-        ruleForm: {
-          pass: '',
-          checkPass: '',
-          age: ''
-        },
-        rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
-          ],
-          age: [
-            { validator: checkAge, trigger: 'blur' }
-          ]
-        }
-      };
-    },
-    methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
+import { fetchLogin } from '@/api/login'
+export default {
+  data() {
+    return {
+      fromData: {
+        username: '',
+        password: ''
       }
     }
+  },
+  methods: {
+    async handleLogin() {
+      const vm = this
+      vm.$message({
+        message: '登录成功',
+        type: 'success'
+      })
+      const res = await fetchLogin()
+      vm.$router.push('/home')
+    }
   }
+}
 </script>
 
-<style>
-
+<style lang="less" scoped>
+ #login-wrap {
+   background-color: #951218;
+   height: 100%;
+   .login-form {
+      background-color: #fff;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: 500px;
+      height: 500px;
+      margin: auto;
+      padding: 50px 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 1px 1px 1px #ccc;
+    }
+ }
 </style>
+
