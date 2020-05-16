@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
+import Login from '@/views/login'
 
 Vue.use(VueRouter);
 
@@ -10,11 +11,15 @@ const routes = [
     name: 'Home',
     component: Home,
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  }
 ];
 
 const router = new VueRouter({
-  routes,
-  mode: 'history'
+  routes
 });
 
 export default router;
