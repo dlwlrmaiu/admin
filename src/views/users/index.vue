@@ -18,7 +18,7 @@
     <!-- 3. 表格 -->
     <el-table
       border
-      :data="tableData"
+      :data="usersList"
       style="width: 100%">
       <el-table-column
         align="center"
@@ -27,29 +27,54 @@
         width="80">
       </el-table-column>
       <el-table-column
-        prop="name"
-        label="姓名"
-        width="180">
+        align="center"
+        prop="username"
+        label="姓名">
       </el-table-column>
       <el-table-column
-        prop="address"
+        align="center"
+        prop="email"
         label="邮箱">
       </el-table-column>
       <el-table-column
-        prop="address"
+        align="center"
+        prop="mobile"
         label="电话">
       </el-table-column>
       <el-table-column
-        prop="address"
+        align="center"
         label="创建时间">
+        <!-- 如果单元格内显示的内容不是字符串文本,需要给被显示的内容外层包裹一个template -->
+        <!-- 
+          template内部要使用数据 设置slot--scope属性
+          该属性的值时要用数据create_time的源头usersList
+          usersList.row => 数组中的每个对象
+          scope由上一级自动传过来
+         -->
+        <template slot-scope="scope">
+          {{scope.row.create_time | formatDate }}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="address"
+        align="center"
         label="用户状态">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="address"
         label="操作">
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button type="success" icon="el-icon-check" circle></el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 4. 分页 -->
@@ -61,26 +86,11 @@ import { fetchUsersList } from '@/api/users'
 export default {
   data() {
     return {
-      query: '',
-      pageNumber: 1,
-      pageSize: 2,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      query: '', // 查询参数
+      pageNumber: 1, // 页码
+      pageSize: 2, // 每页显示条数
+      usersList: [], // 表格绑定的用户数据
+      total: 0 // 总数
     }
   },
   created() {
@@ -89,6 +99,7 @@ export default {
   methods: {
     // 获取用户列表的请求
     async getUsersList() {
+      const _self = this
       // get请求 params 拼接
       // query 查询参数 可以为空
       // pagenum 当前页码 不可以为空
@@ -101,6 +112,23 @@ export default {
         pagesize: this.pageSize
       })
       console.log(res)
+      const { 
+        data: {
+          total,
+          users
+        }, 
+        meta: { 
+          msg, 
+          status} 
+        } = res.data
+        if(status === 200) {
+          _self.usersList = users
+          _self.total = total
+          this.$message.success(msg)
+        } else {
+          this.$message.warning('获取用户数据失败')
+        }
+      
     }
   }
 }
