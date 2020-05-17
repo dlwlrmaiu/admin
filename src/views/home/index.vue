@@ -144,7 +144,7 @@ export default {
            line-height: 80px;
          }
          .login-out {
-           margin: 20px 200px;
+           margin: 20px 0px 20px 200px;
          }
        }
      }

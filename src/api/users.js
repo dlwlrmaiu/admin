@@ -7,3 +7,18 @@ export function fetchUsersList(data) {
     params: data
   })  
 }
+
+export function fetchAddUser(data) {
+  return axios.request({
+    url: 'users',
+    method: 'post',
+    data
+  })  
+}
+
+export function deleteUser(id) {
+  return axios.request({
+    url: `users/${id}`,
+    method: 'delete'
+  })  
+}
