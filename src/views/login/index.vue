@@ -27,12 +27,20 @@ export default {
   methods: {
     async handleLogin() {
       const vm = this
-      vm.$message({
-        message: '登录成功',
-        type: 'success'
-      })
-      const res = await fetchLogin()
-      vm.$router.push('/home')
+      const res = await fetchLogin(this.fromData)
+      // 根据状态码处理对应的情况
+      if(res.data.meta.status === 200) {
+        vm.$message({
+          message: `${res.data.meta.msg}，欢迎 ${res.data.data.username}`,
+          type: 'success'
+        })
+        vm.$router.push('/home')
+      } else {
+        vm.$message({
+          message: `${res.data.meta.msg}，请重新登录`,
+          type: 'warning'
+        })
+      }
     }
   }
 }

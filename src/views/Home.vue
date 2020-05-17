@@ -1,11 +1,11 @@
 <template>
   <div class="home">
+    <button @click="btnClick">qingqiu</button>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import { fetchList } from '@/api/table'
 
 export default {
   name: 'Home',
@@ -15,10 +15,7 @@ export default {
     }
   },
   methods:{
-    async request() {
-      const res = await fetchList()
-      this.msg = res.data.msg
-    }
+    
   }
 }
 </script>
