@@ -1,4 +1,4 @@
-import axios from 'axios'
+ import axios from 'axios'
 
 // 封装axios
 class httpRequset{
@@ -11,8 +11,10 @@ class httpRequset{
   getInsideConfig() {
     const config = {
       baseURL: this.baseUrl,
-      header: {
+      headers: {
         // 请求头设置
+        // 需要授权的API, 必须在请求头中使用 Authorization 字段提供 token令牌
+        Authorization: localStorage.getItem('token')
       }
     }
     return config

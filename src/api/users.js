@@ -1,8 +1,9 @@
-import axios from './../utils/axios.js'
+import axios from '@/utils/axios.js'
 
-export function fetchList() {
+export function fetchUsersList(data) {
   return axios.request({
     url: 'users',
-    method: 'get'
-  })
+    method: 'get',
+    params: data
+  })  
 }
