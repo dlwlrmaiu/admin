@@ -2,7 +2,7 @@
   <div id="home-container">
     <el-container class="home-el-container">
       <el-aside width="200px">
-        <el-menu>
+        <el-menu router>
           <el-menu-item>
             <i class="el-icon-s-home"></i>
             <span slot="title">首页</span>
@@ -13,7 +13,7 @@
               <i class="el-icon-user"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="1-1">
+            <el-menu-item index="users">
               <i class="el-icon-user-solid"></i>
               <span slot="title">用户列表</span>
             </el-menu-item>
@@ -93,7 +93,9 @@
             </el-col>
           </el-row>
         </el-header>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
