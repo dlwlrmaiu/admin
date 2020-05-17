@@ -1,98 +1,68 @@
 <template>
   <div id="home-container">
     <el-container class="home-el-container">
-      <el-aside width="200px">
-        <el-menu>
-          <el-menu-item>
-            <i class="el-icon-s-home"></i>
-            <span slot="title">首页</span>
-          </el-menu-item>
-
-          <el-submenu index="1">
-            <template slot="title">
-              <i class="el-icon-user"></i>
-              <span>用户管理</span>
-            </template>
-            <el-menu-item index="1-1">
-              <i class="el-icon-user-solid"></i>
-              <span slot="title">用户列表</span>
+      <el-header height="80px">
+        <el-row>
+          <el-col :span="2">
+            <div class="grid-content bg-purple">
+              <i class="el-icon-s-home"></i>
+            </div>
+          </el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple">
+              <h3 class="header-title">dlwlrma电商后台管理系统</h3>
+            </div>
+          </el-col>
+          <el-col :span="2">
+            <div class="grid-content bg-purple-light">
+              <el-button class="login-out" type="primary">退出</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-container class="aside-main-container">
+        <el-aside width="200px">
+          <el-menu
+            default-active="2"
+            class="el-menu-vertical-demo"
+            @open="handleOpen"
+            @close="handleClose">
+            <el-submenu index="1">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <el-menu-item-group>
+                <template slot="title">分组一</template>
+                <el-menu-item index="1-1">选项1</el-menu-item>
+                <el-menu-item index="1-2">选项2</el-menu-item>
+              </el-menu-item-group>
+              <el-menu-item-group title="分组2">
+                <el-menu-item index="1-3">选项3</el-menu-item>
+              </el-menu-item-group>
+              <el-submenu index="1-4">
+                <template slot="title">选项4</template>
+                <el-menu-item index="1-4-1">选项1</el-menu-item>
+              </el-submenu>
+              <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">导航四</span>
             </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-attract"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="2-1">
-              <i class="el-icon-s-custom"></i>
-              <span slot="title">角色列表</span>
-            </el-menu-item>
-            <el-menu-item index="2-2">
+            </el-submenu>
+            <el-menu-item index="2">
               <i class="el-icon-menu"></i>
-              <span slot="title">权限列表</span>
+              <span slot="title">导航二</span>
             </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-s-cooperation"></i>
-              <span>商品管理</span>
-            </template>
-            <el-menu-item index="3-1">
-              <i class="el-icon-s-shop"></i>
-              <span slot="title">商品列表</span>
+            <el-menu-item index="3" disabled>
+              <i class="el-icon-document"></i>
+              <span slot="title">导航三</span>
             </el-menu-item>
-            <el-menu-item index="3-2">
-              <i class="el-icon-circle-plus"></i>
-              <span slot="title">分类参数</span>
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">导航四</span>
             </el-menu-item>
-            <el-menu-item index="3-3">
-              <i class="el-icon-s-order"></i>
-              <span slot="title">商品分类</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-notebook-1"></i>
-              <span>订单管理</span>
-            </template>
-            <el-menu-item index="4-1">
-              <i class="el-icon-notebook-2"></i>
-              <span slot="title">订单列表</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-s-marketing"></i>
-              <span>数据统计</span>
-            </template>
-            <el-menu-item index="5-1">
-              <i class="el-icon-s-promotion"></i>
-              <span slot="title">数据报表</span>
-            </el-menu-item>
-          </el-submenu>
-
-
-        </el-menu>
-      </el-aside>
-      <el-container class="header-main-container">
-        <el-header height="80px">
-          <el-row>
-            <el-col :span="20">
-              <div class="grid-content bg-purple">
-                <h3 class="header-title">dlwlrma电商后台管理系统</h3>
-              </div>
-            </el-col>
-            <el-col :span="4">
-              <div class="grid-content bg-purple-light">
-                <el-button class="login-out" type="primary">退出</el-button>
-              </div>
-            </el-col>
-          </el-row>
-        </el-header>
+          </el-menu>
+        </el-aside>
         <el-main>Main</el-main>
       </el-container>
     </el-container>
@@ -110,22 +80,30 @@ export default {
    height: 100%;
    .home-el-container {
      height: 100%;
-     .el-menu {
-       height: 100%;
-     }
-     .header-main-container {
-       .el-header {
-         background-color: #304156;
+     .el-header {
+       height: 200px;
+       background-color: #304156;
+       .el-icon-s-home {
          color: #fff;
-         .header-title {
-           margin: 0;
-           padding: 0;
-           text-align: center;
-           line-height: 80px;
-         }
-         .login-out {
-           margin: 20px 200px;
-         }
+         font-size: 40px;
+         line-height: 80px;
+         text-align: center;
+       }
+       .header-title {
+         color: #fff;
+         text-align: center;
+         margin: 0;
+         padding: 0;
+         line-height: 80px;
+         font-size: 30px;
+       }
+       .login-out {
+         margin: 20px 30px;
+       }
+     }
+     .aside-main-container {
+       .el-main {
+         background-color: #E9EEF3;
        }
      }
    }
