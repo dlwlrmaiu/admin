@@ -12,7 +12,7 @@
         <el-input placeholder="请输入内容" v-model="query" class="input-query" clearable @clear=loadUsersList>
           <el-button @click="searchUser" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button @click="dialogFormVisibleAddUser = true" class="add-user" type="primary">添加用户</el-button>
+        <el-button @click="showAddUserDialog" class="add-user" type="primary">添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 3. 表格 -->
@@ -60,6 +60,7 @@
         label="用户状态">
         <template slot-scope="scope">
           <el-switch
+            @change="changeMgState(scope.row)"
             v-model="scope.row.mg_state"
             active-color="#13ce66"
             inactive-color="#ff4949">
@@ -71,9 +72,10 @@
         prop="address"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" circle></el-button>
-          <el-button type="danger" icon="el-icon-delete" circle  @click="showDeleteUserMsgBox(scope.row.id)"></el-button>
-          <el-button type="success" icon="el-icon-check" circle></el-button>
+          <el-button type="primary" icon="el-icon-edit" circle @click="showEditUserMsgBox(scope.row)">
+          </el-button>
+          <el-button type="danger" icon="el-icon-delete" circle  @click="showDeleteUserMsgBox(scope.row)"></el-button>
+          <el-button type="success" icon="el-icon-check" circle  @click="showSetUserRoleMsgBox(scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -95,7 +97,6 @@
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
-      
     </el-pagination>
 
     <!-- 对话框 -->
@@ -120,11 +121,61 @@
         <el-button type="primary" @click="addUser">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 2. 编辑用户的对话框 -->
+    <el-dialog width="600px" title="编辑用户" :visible.sync="dialogFormVisibleEditUser">
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input disabled v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEditUser = false">取 消</el-button>
+        <el-button type="primary" @click="editUser">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 设置用户权限 -->
+    <el-dialog title="分配角色" :visible.sync="dialogFormVisibleSetUserRole" width="600px">
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input disabled v-model="currentUsername" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" :label-width="formLabelWidth">
+          <!-- 如果select绑定的数据的值和option的value一样 就会显示该option的label值 -->
+          <el-select v-model="currentRoleId">
+            <!-- value前不加: 此时-1位字符串 加了 为数字 -1 -->
+            <el-option disabled label="请选择" :value="-1"></el-option>
+            <!-- 选择看到的label值时,其实改变了value值,因为select中双向绑定,也改变了currentRoleId的值 -->
+            <el-option v-for="(item, index) in roles" :key="index" :label="item.roleName" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleSetUserRole = false">取 消</el-button>
+        <el-button type="primary" @click="setUserRole">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
-import { fetchUsersList, fetchAddUser,deleteUser } from '@/api/users'
+import { 
+  fetchUsersList, 
+  fetchAddUser, 
+  deleteUser, 
+  editUser, 
+  changeUserState, 
+  fetchUser, 
+  fetchUserRoles,
+  fetchSetUserRole
+} from '@/api/users'
 export default {
   data() {
     return {
@@ -135,13 +186,22 @@ export default {
       total: 0, // 总数
       // 添加对话框的属性
       dialogFormVisibleAddUser: false,
+      dialogFormVisibleEditUser: false,
+      dialogFormVisibleSetUserRole: false,
       form: {
         username: '',
         password: '',
         email: '',
-        mobile: ''
+        mobile: '',
+        id: 0
       },
       formLabelWidth: '100px',
+      currentRoleId: -1,
+      // 设置权限时当前用户的id
+      currentId: -1,
+      currentUsername: '',
+      // 保存所有的角色数据
+      roles: []
     }
   },
   created() {
@@ -150,11 +210,17 @@ export default {
   methods: {
     // 搜索用户
     searchUser() {
-      this.getUsersList()
+      this.query === '' ? this.$message.warning('请输入搜索内容') : this.getUsersList()
     },
     // 搜索框点x重新渲染用户
     loadUsersList() {
       this.getUsersList()
+    },
+    // 展示添加用户对话框
+    showAddUserDialog() {
+      // 由于编辑时更新了this.form, 在添加时需要重新清空一下
+      this.form = {}
+      this.dialogFormVisibleAddUser = true
     },
     // 添加用户
     async addUser() {
@@ -180,15 +246,33 @@ export default {
         _self.$message.warning(msg)
       }
     },
-    // 删除用户 - 打开消息盒子
-    showDeleteUserMsgBox(userId) {
+    // 改变用户状态 
+    async changeMgState(user) {
       const _self = this
-      _self.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+      // 点击视图, 改变状态时, 由于双向绑定 此时 mg_state = !mg_state 不需要手动重新设置状态为true或false
+      const res = await changeUserState(user.id, user.mg_state)
+      const { data, meta: { msg, status } } = res.data
+      if(status === 200) {
+        _self.$message({
+          type: 'success',
+          message: msg
+        }) 
+      } else {
+        _self.$message({
+          type: 'warning',
+          message: msg
+        })
+      }
+    },
+    // 删除用户 - 打开消息盒子
+    showDeleteUserMsgBox(user) {
+      const _self = this
+      _self.$confirm(`此操作将永久删除用户：${user.username}，是否继续？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
-        const res = await deleteUser(userId)
+        const res = await deleteUser(user.id)
         console.log(res)
         if(res.data.meta.status === 200) {
           this.pageNumber = 1
@@ -210,6 +294,67 @@ export default {
           message: '已取消删除'
         });          
       })
+    },
+    showEditUserMsgBox(user) {
+      // 显示编辑对话框
+      this.dialogFormVisibleEditUser = true
+      // 在对话框中显示需要编辑的数据
+      this.form = user
+    },
+    // 编辑用户
+    async editUser() {
+      const _self = this
+      // 打开对话框时已经对form.id赋值
+      const res = await editUser(this.form.id, this.form)
+      // 关闭编辑对话框
+      _self.dialogFormVisibleEditUser = false
+      const { data, meta: { msg, status } } = res.data
+      if(status === 200) {
+        // 成功更新视图并提示
+        _self.getUsersList()
+        _self.$message({
+          type: 'success',
+          message: msg
+        })
+      } else {
+        _self.$message({
+          type: 'warning',
+          message: msg
+        })
+      }
+    },
+    // 打开设置用户权限的对话框
+    async showSetUserRoleMsgBox(user) {
+      this.currentId = user.id
+      // 显示用户名
+      this.currentUsername = user.username
+      // 获取所有的角色
+      const res1 = await fetchUserRoles()
+      this.roles = res1.data.data
+      console.log(res1)
+      // 获取角色用户的角色id -> rid
+      const res2 = await fetchUser(user.id)
+
+      this.currentRoleId = res2.data.data.rid
+      // 展示设置用户权限的对话框
+      this.dialogFormVisibleSetUserRole = true
+    },
+    // 设置用户角色
+    async setUserRole() {
+      const res = await fetchSetUserRole(this.currentId, {rid: this.currentRoleId})
+      const { data, meta: { msg, status } } = res.data
+      this.dialogFormVisibleSetUserRole = false
+      if(status === 200) {
+        this.$message({
+          type: 'success',
+          message: msg
+        }) 
+      } else {
+        this.$message({
+          type: 'warning',
+          message: msg
+        }) 
+      }
     },
     // 获取用户列表的请求
     async getUsersList() {
@@ -258,9 +403,7 @@ export default {
       this.pageNumber = val
       this.getUsersList()
     }
-
-  }
-  
+  } 
 }
 </script>
 
