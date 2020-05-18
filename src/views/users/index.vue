@@ -1,11 +1,12 @@
 <template>
   <el-card class="box-card">
     <!-- 1. 面包屑 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
+    <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    </el-breadcrumb> -->
+    <bread level1="用户管理" level2="用户列表"></bread>
     <!-- 2. 搜索 -->
     <el-row width="500px">
       <el-col>
@@ -46,7 +47,7 @@
         label="创建时间">
         <!-- 如果单元格内显示的内容不是字符串文本,需要给被显示的内容外层包裹一个template -->
         <!-- 
-          template内部要使用数据 设置slot--scope属性
+          template内部要使用数据 设置slot-scope属性
           该属性的值时要用数据create_time的源头usersList
           usersList.row => 数组中的每个对象
           scope由上一级自动传过来
@@ -69,7 +70,6 @@
       </el-table-column>
       <el-table-column
         align="center"
-        prop="address"
         label="操作">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" circle @click="showEditUserMsgBox(scope.row)">

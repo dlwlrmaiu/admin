@@ -14,15 +14,19 @@ class httpRequset{
       headers: {
         // 请求头设置
         // 需要授权的API, 必须在请求头中使用 Authorization 字段提供 token令牌
-        Authorization: localStorage.getItem('token')
+        // Authorization: localStorage.getItem('token')
       }
     }
     return config
   }
-  interceptors(instance, url) {
+  interceptors(instance) {
     // 请求拦截
     instance.interceptors.request.use(config => {
-      // 处理config
+      // 除开登录时,其他请求都要设置该请求头
+      if(config.url !== 'login') {
+        // 需要授权的API, 必须在请求头中使用 Authorization 字段提供 token令牌
+        config.headers['Authorization'] = localStorage.getItem('token')
+      }
       console.log('拦截和处理请求', config)
       return config
     })
@@ -40,10 +44,10 @@ class httpRequset{
   request(options) {
     const instance = axios.create() // 创造实例对象
     // 合并配置
-    // options = { baseURL: '/api/', url: 'banner' }
+    // options = { baseURL: 'http://127.0.0.1:8888/api/private/v1/', url: 'login' }
     options = Object.assign(this.getInsideConfig(), options)
     console.log(options) 
-    this.interceptors(instance, options.url)
+    this.interceptors(instance)
     return instance(options)
   }
 }
