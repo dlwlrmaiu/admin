@@ -18,25 +18,27 @@
           <el-row v-for="(item, index) in scope.row.children" :key="index">
             <!-- 一级权限 -->
             <el-col :span="4">
-              <el-tag closable>{{item.authName}}</el-tag>
+              <!-- 角色id和权限id -->
+              <el-tag closable @close="deleteRight(scope.row.id, item.id)">{{item.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
             <el-col :span="20">
               <!-- 二级权限 -->
               <el-row v-for="(item2 ,index2) in item.children" :key="index2">
                 <el-col :span="4">
-                  <el-tag type="success" closable>{{item2.authName}}</el-tag>
+                  <el-tag @close="deleteRight(scope.row.id, item2.id)" type="success" closable>{{item2.authName}}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
                   <!-- 三级权限: 直接渲染多个el-tag -->
-                  <el-tag type="warning" closable v-for="(item3 ,index3) in item2.children" :key="index3">
+                  <el-tag @close="deleteRight(scope.row.id, item3.id)" type="warning" closable v-for="(item3 ,index3) in item2.children" :key="index3">
                     {{item3.authName}}
                   </el-tag>      
                 </el-col>
               </el-row>
             </el-col>
           </el-row>
+          <span v-if="scope.row.children.length === 0">未分配权限</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -71,6 +73,7 @@
 
 <script>
 import { fetchUserRoles } from '@/api/users'
+import { deleteRoleRight } from '@/api/rights'
 export default {
   data() {
     return {
@@ -81,10 +84,22 @@ export default {
     this.getRolesList()
   },
   methods: {
+    // 获取角色列表
     async getRolesList() {
       const res = await fetchUserRoles()
       this.rolesList = res.data.data
       console.log(res)
+    },
+    // 取消权限
+    async deleteRight(roleId, rightId) {
+      const res = await deleteRoleRight(roleId, rightId)
+      if(res.data.meta.status === 200) {
+        this.getRolesList() 
+        this.$message({
+          type: 'success',
+          message: res.data.meta.msg
+        })
+      }
     }
   }
 }

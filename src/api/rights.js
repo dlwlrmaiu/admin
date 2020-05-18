@@ -6,3 +6,10 @@ export function fetchRightsList(type) {
     method: 'get'
   })
 }
+
+export function deleteRoleRight(roleId,rightId) {
+  return axios.request({
+    url: `roles/${roleId}/rights/${rightId}`,
+    method: 'delete'
+  })
+}
