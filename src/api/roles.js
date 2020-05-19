@@ -22,3 +22,11 @@ export function fetchEditRole(id, data) {
     data
   })
 }
+
+export function fetchModifyRoleRights(id, data) {
+  return axios.request({
+    url: `roles/${id}/rights`,
+    method: 'post',
+    data
+  })
+}
