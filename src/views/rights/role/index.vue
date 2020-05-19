@@ -95,7 +95,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelEditRole">取 消</el-button>
+        <el-button @click="dialogFormVisibleEditRole = false">取 消</el-button>
         <el-button type="primary" @click="editRole">确 定</el-button>
       </div>
     </el-dialog>
@@ -268,11 +268,6 @@ export default {
       this.roleForm = role
       this.dialogFormVisibleEditRole = true
     },
-    // 取消编辑角色对话框
-    cancelEditRole() {
-      this.dialogFormVisibleEditRole = false
-      this.getRolesList()
-    },
     // 编辑角色
     async editRole() {
       const res = await fetchEditRole(this.roleForm.id, this.roleForm)
@@ -317,7 +312,6 @@ export default {
 
 <style lang="less" scoped>
   .box-card {
-    height: 100%;
     .el-row {
       .el-button {
         margin-top: 15px;
