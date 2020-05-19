@@ -19,19 +19,19 @@
             <!-- 一级权限 -->
             <el-col :span="4">
               <!-- 角色id和权限id -->
-              <el-tag closable @close="deleteRight(scope.row.id, item.id)">{{item.authName}}</el-tag>
+              <el-tag closable @close="deleteRight(scope.row, item.id)">{{item.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
             <el-col :span="20">
               <!-- 二级权限 -->
               <el-row v-for="(item2 ,index2) in item.children" :key="index2">
                 <el-col :span="4">
-                  <el-tag @close="deleteRight(scope.row.id, item2.id)" type="success" closable>{{item2.authName}}</el-tag>
+                  <el-tag @close="deleteRight(scope.row, item2.id)" type="success" closable>{{item2.authName}}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
                   <!-- 三级权限: 直接渲染多个el-tag -->
-                  <el-tag @close="deleteRight(scope.row.id, item3.id)" type="warning" closable v-for="(item3 ,index3) in item2.children" :key="index3">
+                  <el-tag @close="deleteRight(scope.row, item3.id)" type="warning" closable v-for="(item3 ,index3) in item2.children" :key="index3">
                     {{item3.authName}}
                   </el-tag>      
                 </el-col>
@@ -215,13 +215,17 @@ export default {
       console.log(res)
     },
     // 取消权限
-    async deleteRight(roleId, rightId) {
-      const res = await deleteRoleRight(roleId, rightId)
-      if(res.data.meta.status === 200) {
-        this.getRolesList() 
+    async deleteRight(role, rightId) {
+      // roleId 当前角色Id
+      // rightId 要删除的权限id
+      const res = await deleteRoleRight(role.id, rightId)
+      const { data, meta: { msg, status } } = res.data
+      if(status === 200) {
+        // 删除成功之后,更新当前角色的children
+        role.children = data
         this.$message({
           type: 'success',
-          message: res.data.meta.msg
+          message: msg
         })
       }
     }
