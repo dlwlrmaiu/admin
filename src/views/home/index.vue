@@ -8,74 +8,16 @@
             <span slot="title">首页</span>
           </el-menu-item>
 
-          <el-submenu index="1">
+          <el-submenu :index="''+item.order" v-for="(item, index) in menus" :key="index">
             <template slot="title">
               <i class="el-icon-user"></i>
-              <span>用户管理</span>
+              <span>{{item.authName}}</span>
             </template>
-            <el-menu-item index="users">
+            <el-menu-item :index="item2.path" v-for="(item2, index2) in item.children" :key="index2">
               <i class="el-icon-user-solid"></i>
-              <span slot="title">用户列表</span>
+              <span slot="title">{{item2.authName}}</span>
             </el-menu-item>
           </el-submenu>
-
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-attract"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="role">
-              <i class="el-icon-s-custom"></i>
-              <span slot="title">角色列表</span>
-            </el-menu-item>
-            <el-menu-item index="right">
-              <i class="el-icon-menu"></i>
-              <span slot="title">权限列表</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-s-cooperation"></i>
-              <span>商品管理</span>
-            </template>
-            <el-menu-item index="3-1">
-              <i class="el-icon-s-shop"></i>
-              <span slot="title">商品列表</span>
-            </el-menu-item>
-            <el-menu-item index="3-2">
-              <i class="el-icon-circle-plus"></i>
-              <span slot="title">分类参数</span>
-            </el-menu-item>
-            <el-menu-item index="3-3">
-              <i class="el-icon-s-order"></i>
-              <span slot="title">商品分类</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-notebook-1"></i>
-              <span>订单管理</span>
-            </template>
-            <el-menu-item index="4-1">
-              <i class="el-icon-notebook-2"></i>
-              <span slot="title">订单列表</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-s-marketing"></i>
-              <span>数据统计</span>
-            </template>
-            <el-menu-item index="5-1">
-              <i class="el-icon-s-promotion"></i>
-              <span slot="title">数据报表</span>
-            </el-menu-item>
-          </el-submenu>
-
-
         </el-menu>
       </el-aside>
       <el-container class="header-main-container">
@@ -102,8 +44,20 @@
 </template>
 
 <script>
+import { fetchMenus } from '@/api/rights';
 export default {
+  data() {
+    return {
+      menus: []
+    }
+  },
   methods: {
+    // 获取导航数据
+    async getMenus() {
+      const res = await fetchMenus()
+      // 不同角色登录显示对应权限
+      this.menus = res.data.data
+    },
     loginOut() {
       // 退出
       // 清除token
@@ -115,12 +69,15 @@ export default {
     }
   },
   // 进入首页组件渲染之前判断是否有token,没有调回登录页
-  beforeCreate() {
-    // 从本地存储中取出token
-    const token = localStorage.getItem('token')
-    if(!token) {
-      this.$router.push({name: 'Login'})
-    }
+  // beforeCreate() {
+  //   // 从本地存储中取出token
+  //   const token = localStorage.getItem('token')
+  //   if(!token) {
+  //     this.$router.push({name: 'Login'})
+  //   }
+  // },
+  created() {
+    this.getMenus()
   }
 }
 </script>

@@ -13,3 +13,10 @@ export function deleteRoleRight(roleId,rightId) {
     method: 'delete'
   })
 }
+
+export function fetchMenus() {
+  return axios.request({
+    url: 'menus',
+    method: 'get'
+  })
+}

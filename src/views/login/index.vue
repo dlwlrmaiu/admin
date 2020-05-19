@@ -3,10 +3,10 @@
     <el-form class="login-form" label-position="top" label-width="80px" :model="fromData">
       <h2>登录</h2>
       <el-form-item label="用户名">
-        <el-input v-model="fromData.username"></el-input>
+        <el-input placeholder="请输入账号" v-model="fromData.username"></el-input>
       </el-form-item>
       <el-form-item label="用户密码">
-        <el-input v-model="fromData.password"></el-input>
+        <el-input placeholder="请输入密码" v-model="fromData.password" show-password></el-input>
       </el-form-item>
       <el-button type="primary" @click.prevent="handleLogin">登录</el-button>
     </el-form>
@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     async handleLogin() {
-      const vm = this
+      const _self = this
       const res = await fetchLogin(this.fromData)
       const { 
         data, 
@@ -40,13 +40,13 @@ export default {
         // 登录成功
         // 1. 保存token
         localStorage.setItem('token', data.token)
-        vm.$router.push({name: 'Home'})
-        vm.$message({
+        _self.$router.push({name: 'Home'})
+        _self.$message({
           message: `${msg}，欢迎 ${data.username}`,
           type: 'success'
         })
       } else {
-        vm.$message({
+        _self.$message({
           message: `${msg}，请重新登录`,
           type: 'warning'
         })
