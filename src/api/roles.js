@@ -7,3 +7,18 @@ export function fetchAddRole(data) {
     data
   })
 }
+
+export function fetchDeleteRole(id) {
+  return axios.request({
+    url: `roles/${id}`,
+    method: 'delete'
+  })
+}
+
+export function fetchEditRole(id, data) {
+  return axios.request({
+    url: `roles/${id}`,
+    method: 'put',
+    data
+  })
+}
