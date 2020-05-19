@@ -5,7 +5,7 @@
     <!-- 2. 按钮 -->
     <el-row>
       <el-col>
-        <el-button type="primary">添加角色</el-button>
+        <el-button type="primary" @click="showAddRoleMsgBox">添加角色</el-button>
       </el-col>
     </el-row>
     <!-- 3. 表格 -->
@@ -68,22 +68,68 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 4. 对话框 -->
+    <!-- 4.1. 添加角色对话框 -->
+    <el-dialog width="600px" title="添加角色" :visible.sync="dialogFormVisibleAddRole">
+      <el-form :model="roleForm">
+        <el-form-item label="角色名称" :label-width="formLabelWidth">
+          <el-input v-model="roleForm.roleName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" :label-width="formLabelWidth">
+          <el-input v-model="roleForm.roleDesc" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAddRole = false">取 消</el-button>
+        <el-button type="primary" @click="addRole">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
 import { fetchUserRoles } from '@/api/users'
 import { deleteRoleRight } from '@/api/rights'
+import { fetchAddRole } from '@/api/roles'
 export default {
   data() {
     return {
-      rolesList: []
+      rolesList: [], // 角色列表
+      roleForm: { // 添加角色表单数据
+        roleName: '',
+        roleDesc: ''
+      },
+      dialogFormVisibleAddRole: false,
+      formLabelWidth: '100px'
     }
   },
   created() {
     this.getRolesList()
   },
   methods: {
+    // 打开添加角色对话框
+    showAddRoleMsgBox() {
+      this.dialogFormVisibleAddRole = true
+    },
+    // 添加角色
+    async addRole() {
+      const res = await fetchAddRole(this.roleForm)
+      this.dialogFormVisibleAddRole = false
+      const { meta: {msg, status } } = res.data
+      console.log(res)
+      console.log(status)
+      if(status === 201) {
+        this.$message({
+          type: 'success',
+          message: msg
+        })
+      } else {
+        this.$message({
+          type: 'warning',
+          message: msg
+        })
+      }
+    },
     // 获取角色列表
     async getRolesList() {
       const res = await fetchUserRoles()
