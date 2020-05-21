@@ -9,12 +9,10 @@
     <bread level1="用户管理" level2="用户列表"></bread>
     <!-- 2. 搜索 -->
     <el-row width="500px">
-      <el-col>
         <el-input placeholder="请输入内容" v-model="query" class="input-query" clearable @clear=loadUsersList>
           <el-button @click="searchUser" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <el-button @click="showAddUserDialog" class="add-user" type="primary">添加用户</el-button>
-      </el-col>
     </el-row>
     <!-- 3. 表格 -->
     <el-table
@@ -53,7 +51,7 @@
           scope由上一级自动传过来
          -->
         <template slot-scope="scope">
-          {{scope.row.create_time | formatDate }}
+          {{scope.create_time | formatDate }}
         </template>
       </el-table-column>
       <el-table-column

@@ -32,6 +32,36 @@ const routes = [
         name: 'role',
         path: 'roles',
         component: () => import('@/views/rights/role/index')
+      },
+      {
+        name: 'goods',
+        path: 'goods',
+        component: () => import('@/views/goods/index')
+      },
+      {
+        name: 'goods-add',
+        path: 'goodsadd',
+        component: () => import('@/views/goods-add/index')
+      },
+      {
+        name: 'params',
+        path: 'params',
+        component: () => import('@/views/params/index')
+      },
+      {
+        name: 'categories',
+        path: 'categories',
+        component: () => import('@/views/categories/index')
+      },
+      {
+        name: 'orders',
+        path: 'orders',
+        component: () => import('@/views/orders/index')
+      },
+      {
+        name: 'reports',
+        path: 'reports',
+        component: () => import('@/views/reports/index')
       }
     ]
   }
