@@ -155,7 +155,9 @@ export default {
       let handleStaticParamsArr = this.staticParams.map((item) => {
         return { attr_id: item.attr_id, attr_value: item.attr_vals }
       })
+      // 合并静态参数和动态参数
       this.form.attrs = [...handleDynamicParamsArr, ...handleStaticParamsArr]
+      // 处理完this.form中的数据发送请求
       const res = await fetchAddGoods(this.form)
       const { meta: { msg, status } } = res.data
       this.$router.push('/goods')

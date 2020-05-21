@@ -47,7 +47,7 @@
         align="center"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button @click="showEditGoodsDialog(scope.row)" type="primary" icon="el-icon-edit" circle></el-button>
           <el-button @click="deleteGoods(scope.row)" type="danger" icon="el-icon-delete" circle></el-button>
         </template>
       </el-table-column>
@@ -62,11 +62,32 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 编辑对话框 -->
+    <el-dialog width="600px" title="编辑商品" :visible.sync="dialogFormVisibleEditGoods">
+      <el-form :model="goodsForm">
+        <el-form-item label="商品名称" :label-width="formLabelWidth">
+          <el-input v-model="goodsForm.goods_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="价格" :label-width="formLabelWidth">
+          <el-input v-model="goodsForm.goods_price" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="数量" :label-width="formLabelWidth">
+          <el-input v-model="goodsForm.goods_number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="重量" :label-width="formLabelWidth">
+          <el-input v-model="goodsForm.goods_weight" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEditGoods = false">取 消</el-button>
+        <el-button type="primary" @click="editGoods">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
-import { fetchGoodsList, fetchDeleteGoods } from '@/api/goods'
+import { fetchGoodsList, fetchDeleteGoods, fetchGoods, fetchEditGoods } from '@/api/goods'
 export default {
   data() {
     return {
@@ -76,12 +97,46 @@ export default {
       pageSize: 8, // 当前每页展示的数据条数
       currentPage: 1, // 当前选择的页码数
       total: -1, // 数据总数
+      goodsForm: { // 对话框中的数据
+        goods_name: '',
+        goods_price: '',
+        goods_number: '',
+        goods_weight: ''
+      },
+      dialogFormVisibleEditGoods: false,
+      formLabelWidth: '100px'
     }
   },
   created() {
     this.getGoodsList()
   },
   methods: {
+    // 编辑商品
+    async editGoods() {
+      // 先处理一下this.goodsForm.attrs的请求格式
+      const tempArray = this.goodsForm.attrs.map((item) => {
+        return { attr_id: item.attr_id, attr_value: item.attr_value }
+      })
+      this.goodsForm.attrs = tempArray
+      // 处理完成之后直接发送编辑请求
+      const res = await fetchEditGoods(this.goodsForm.goods_id, this.goodsForm)
+      const { meta: { status } } = res.data
+      this.getGoodsList()
+      this.dialogFormVisibleEditGoods = false
+      if(status === 200) {
+        this.$message({
+          type: 'success',
+          message: '编辑商品成功'
+        })
+      }
+    },
+    // 打开编辑对话框
+    async showEditGoodsDialog(goods) {
+      // 打开对话框之前先获取该商品信息展示在对话框中
+      const res = await fetchGoods(goods.goods_id)
+      this.goodsForm = res.data.data
+      this.dialogFormVisibleEditGoods = true
+    },
     // 删除商品
     deleteGoods(goods) {
       this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {

@@ -38,3 +38,18 @@ export function fetchAddGoods(data) {
     data
   })
 }
+
+export function fetchGoods(id) {
+  return axios.request({
+    url: `goods/${id}`,
+    method: 'get'
+  })
+}
+
+export function fetchEditGoods(id, data) {
+  return axios.request({
+    url: `goods/${id}`,
+    method: 'put',
+    data
+  })
+}
