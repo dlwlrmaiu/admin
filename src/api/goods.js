@@ -53,3 +53,34 @@ export function fetchEditGoods(id, data) {
     data
   })
 }
+
+export function fetchAddAttribute(categoryId, data) {
+  return axios.request({
+    url: `categories/${categoryId}/attributes`,
+    method: 'post',
+    data
+  })
+}
+
+export function fetchDeleteAttribute(categoryId, attributeId) {
+  return axios.request({
+    url: `categories/${categoryId}/attributes/${attributeId}`,
+    method: 'delete'
+  })
+}
+
+export function fetchMoveOrAddSingleAttribute(categoryId, attributeId, data) {
+  return axios.request({
+    url: `categories/${categoryId}/attributes/${attributeId}`,
+    method: 'put',
+    data
+  })
+}
+
+export function fetchEditAttribute(categoryId, attributeId, data) {
+  return axios.request({
+    url: `categories/${categoryId}/attributes/${attributeId}`,
+    method: 'get',
+    params: data
+  })
+}
