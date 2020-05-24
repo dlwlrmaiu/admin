@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import cityList from '@/assets/city-data'
+import cityList from '@/utils/city-data'
 // swiper.js zepto.js iscroll.js wow.js
 import { fetchOrders } from '@/api/orders'
 export default {
