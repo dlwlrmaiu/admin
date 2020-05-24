@@ -84,3 +84,26 @@ export function fetchEditAttribute(categoryId, attributeId, data) {
     params: data
   })
 }
+
+export function fetchAddCategories(data) {
+  return axios.request({
+    url: 'categories',
+    method: 'post',
+    data
+  })
+}
+
+export function fetchDeleteCategories(id) {
+  return axios.request({
+    url: `categories/${id}`,
+    method: 'delete'
+  })
+}
+
+export function fetchEditCategories(id, data) {
+  return axios.request({
+    url: `categories/${id}`,
+    method: 'put',
+    data
+  })
+}

@@ -186,8 +186,10 @@ import {
 export default {
   data() {
     return {
+       // 级联选择器绑定数据
       selectedOptions: [],
       options: [],
+      // 配置
       defaultProps: {
         expandTrigger: 'hover',
         value: 'cat_id',
@@ -199,20 +201,24 @@ export default {
       staticParams: [], //静态参数
       inputVisible: false,
       inputValue: '',
+      // 添加静态属性对话框绑定数据
       dialogFormVisibleAddAttributes: false,
       formStaticParams: {
         attr_name: '',
         attr_sel: 'only',
         attr_vals: ''
       },
+      // 添加动态属性对话框绑定数据
       dialogFormVisibleAddDAttributes: false,
       formDynamicParams: {
         attr_name: '',
         attr_sel: 'many',
         attr_vals: ''
       },
+      // 编辑动态属性对话框绑定数据
       dialogFormVisibleEditDAttributes: false,
       formEditDynamicParams: {},
+      // 编辑静态属性对话框绑定数据
       dialogFormVisibleEditAttributes: false,
       formEditStaticParams: {},
       formLabelWidth: '100px'
@@ -224,11 +230,13 @@ export default {
   methods: {
     // 编辑静态参数
     async editStaticAttributes() {
+      // 更新静态参数请求
       const res = await fetchMoveOrAddSingleAttribute(this.selectedOptions[2], this.formEditStaticParams.attr_id, {
         attr_name: this.formEditStaticParams.attr_name,
         attr_sel: this.formEditStaticParams.attr_sel,
         attr_vals: this.formEditStaticParams.attr_vals
       })
+      // 刷新视图
       this.handleClick()
       this.dialogFormVisibleEditAttributes = false
     },
