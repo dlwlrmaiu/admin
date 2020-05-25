@@ -1,4 +1,4 @@
- import axios from 'axios'
+import axios from 'axios'
 
 // 封装axios
 class httpRequset{
@@ -27,17 +27,14 @@ class httpRequset{
         // 需要授权的API, 必须在请求头中使用 Authorization 字段提供 token令牌
         config.headers['Authorization'] = localStorage.getItem('token')
       }
-      console.log('拦截和处理请求', config)
       return config
     })
     // 响应拦截
     instance.interceptors.request.use(res => {
       // 处理config
-      console.log('拦截和处理响应', res)
       return res
     }, error => {
       // 请求出问题, 处理问题
-      console.log(error)
       return { error: '网络出错' }
     })
   }
@@ -46,7 +43,7 @@ class httpRequset{
     // 合并配置
     // options = { baseURL: 'http://127.0.0.1:8888/api/private/v1/', url: 'login' }
     options = Object.assign(this.getInsideConfig(), options)
-    console.log(options) 
+    //console.log(options) 
     this.interceptors(instance)
     return instance(options)
   }
